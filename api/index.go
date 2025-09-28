@@ -2,9 +2,7 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
-	"os"
 )
 
 type Response struct {
@@ -12,7 +10,8 @@ type Response struct {
 	Status  string `json:"status"`
 }
 
-func handler(w http.ResponseWriter, r *http.Request) {
+// Handler is the main function that Vercel will call
+func Handler(w http.ResponseWriter, r *http.Request) {
 	// 设置CORS头
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
@@ -30,17 +29,4 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(response)
-}
-
-func main() {
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8080"
-	}
-
-	http.HandleFunc("/", handler)
-	http.HandleFunc("/api", handler)
-	
-	fmt.Printf("Server starting on port %s\n", port)
-	http.ListenAndServe(":"+port, nil)
 }
