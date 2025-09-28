@@ -1,21 +1,36 @@
 # 91porn_spider
 
 #### 介绍
-91视频网站爬虫工具，可以批量或单独爬取视频。
+91视频网站爬虫工具，可以批量或单独爬取视频。现已完全重写为Python版本，功能更强大，使用更简单。
 不带参数运行程序时，进入日常爬取模式，固定每天8点爬取24小时内发布的30个评分最高的视频，评分由关键字、视频时长、作者分三项评分组成(score下的两个txt定义了关键词评分和作者评分，分数范围[-∞，100])。每周六9点会爬取本周评分最高的30个最热视频并把当周的视频整理到一个文件夹下。程序有去重机制不会重复下载同一个视频。
 
 #### 软件架构
-基于go1.15编写，依赖chrome浏览器、python下的m3_dl、pysocks。
-
+基于Python 3.8+编写，使用Selenium + Chrome浏览器进行网页抓取，支持代理、去重、定时任务等功能。
 
 #### 安装教程
 
-1.  安装chrome浏览器。
-2.  安装python、m3_dl、pysocks  
-    pip3 install m3_dl  
-    pip3 install pysocks
-3.  编译代码  
-    工程根目录下执行go build
+**方法一：使用启动脚本（推荐）**
+```bash
+# Linux/Mac
+./run.sh
+
+# Windows
+run.bat
+```
+
+**方法二：手动安装**
+1. 安装Chrome浏览器
+2. 安装Python 3.8+
+3. 创建虚拟环境：
+   ```bash
+   python3 -m venv venv
+   source venv/bin/activate  # Linux/Mac
+   # 或 venv\Scripts\activate.bat  # Windows
+   ```
+4. 安装依赖：
+   ```bash
+   pip install -r requirements.txt
+   ```
 
 
 #### 使用说明
@@ -31,11 +46,24 @@
 
 2. 示例  
    **单个视频爬取**  
-   ./spider91 -c -u "http://91porn.com/view_video.php?viewkey=8cd0148b3fe08d4a4c2f" -p "http://127.0.0.1:10808"  
+   ```bash
+   python3 spider91.py -c -u "http://91porn.com/view_video.php?viewkey=8cd0148b3fe08d4a4c2f" -p "http://127.0.0.1:10808"
+   ```
+   
    **单页多个视频爬取**  
-   ./spider91 -c -u "http://91porn.com/v.php?category=rf&viewtype=basic&page=2" -p "http://127.0.0.1:10808"   
+   ```bash
+   python3 spider91.py -c -u "http://91porn.com/v.php?category=rf&viewtype=basic&page=2" -p "http://127.0.0.1:10808"
+   ```
+   
    **爬取前3天评分前100的视频**  
-   ./spider91 -now 3 -n 100
+   ```bash
+   python3 spider91.py -now 3 -n 100
+   ```
+   
+   **定时任务模式（默认）**  
+   ```bash
+   python3 spider91.py
+   ```
 
 3. 新增docker版本  
    https://hub.docker.com/repository/docker/templelv/spider91

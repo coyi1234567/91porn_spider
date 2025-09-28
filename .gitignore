@@ -1,12 +1,68 @@
-# Binaries for programs and plugins
-*.exe
-*.exe~
-*.dll
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
 *.so
-*.dylib
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
 
-# Test binary, built with `go test -c`
-*.test
+# Virtual Environment
+venv/
+env/
+ENV/
 
-# Output of the go coverage tool, specifically when used with LiteIDE
-*.out
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+spider91.log
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+doneDB/
+
+# Videos
+videos/
+test_videos/
+*.mp4
+*.avi
+*.mkv
+*.mov
+*.wmv
+*.flv
+*.webm
+*.m4v
+*.3gp
+*.mpg
+*.mpeg
+*.m2v
+
+# Chrome driver
+chromedriver
+chromedriver.exe
+
+# OS
+.DS_Store
+Thumbs.db
