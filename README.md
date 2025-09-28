@@ -49,4 +49,18 @@
    docker attach spider91 命令可以进入容器终端  
    容器终端中执行/root/spider91/update.sh   将更新代码为github上最新并编译重新执行。  
    代理列表通过修改配置文件更新，配置文件路径/root/spider91/proxyConfig.yaml  
-   推荐使用passwall建立多个代理。  
+   推荐使用passwall建立多个代理。
+
+#### Vercel部署
+
+本项目已配置支持Vercel部署：
+
+1. 将代码推送到GitHub仓库
+2. 在Vercel中导入GitHub仓库
+3. 自动部署完成
+
+API端点：
+- `/` - 返回API状态信息
+- `/api` - 返回API状态信息
+
+注意：由于Vercel的无服务器环境限制，完整的爬虫功能需要在本地环境或支持Chrome的服务器环境中运行。  
