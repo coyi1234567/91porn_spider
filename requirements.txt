@@ -1,0 +1,6 @@
+# No additional dependencies required for basic API
+# The original spider functionality would require:
+# requests
+# beautifulsoup4
+# selenium
+# chromedriver-autoinstaller

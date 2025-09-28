@@ -53,14 +53,30 @@
 
 #### Vercel部署
 
-本项目已配置支持Vercel部署：
+本项目已配置支持Vercel部署（Python版本）：
 
+**为什么选择Python而不是Go？**
+- ✅ Vercel对Python支持更成熟稳定
+- ✅ 配置更简单，无需复杂的运行时版本
+- ✅ 依赖管理更灵活
+- ✅ 调试和错误处理更容易
+
+**部署步骤：**
 1. 将代码推送到GitHub仓库
 2. 在Vercel中导入GitHub仓库
 3. 自动部署完成
 
-API端点：
+**API端点：**
 - `/` - 返回API状态信息
 - `/api` - 返回API状态信息
+
+**API响应示例：**
+```json
+{
+  "message": "91porn_spider API is running successfully!",
+  "status": "success",
+  "framework": "Python"
+}
+```
 
 注意：由于Vercel的无服务器环境限制，完整的爬虫功能需要在本地环境或支持Chrome的服务器环境中运行。  
