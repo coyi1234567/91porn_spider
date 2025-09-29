@@ -1,110 +1,228 @@
-# 91porn_spider
+# 91porn视频爬虫 - Python版本
 
-#### 介绍
-91视频网站爬虫工具，可以批量或单独爬取视频。现已完全重写为Python版本，功能更强大，使用更简单。
-不带参数运行程序时，进入日常爬取模式，固定每天8点爬取24小时内发布的30个评分最高的视频，评分由关键字、视频时长、作者分三项评分组成(score下的两个txt定义了关键词评分和作者评分，分数范围[-∞，100])。每周六9点会爬取本周评分最高的30个最热视频并把当周的视频整理到一个文件夹下。程序有去重机制不会重复下载同一个视频。
+基于原始Go项目重写的Python版本，支持日榜、周榜、月榜视频爬取，具备完整的去重机制和元数据管理功能。
 
-#### 软件架构
-基于Python 3.8+编写，使用Selenium + Chrome浏览器进行网页抓取，支持代理、去重、定时任务等功能。
+## 功能特性
 
-#### 安装教程
+- 🎯 **多榜单支持**: 日榜、周榜、月榜前10名视频
+- 📁 **智能存储**: 按日期和类型分文件夹存储
+- 🏷️ **丰富命名**: 文件名包含排名、分数、热度、收藏数量
+- 🔄 **去重机制**: 基于viewkey和文件hash双重去重
+- 📊 **元数据管理**: 完整的视频信息记录和JSON导出
+- 🚀 **高效下载**: 支持断点续传和错误重试
+- 🔧 **配置灵活**: 支持代理配置和评分规则自定义
 
-**方法一：使用启动脚本（推荐）**
+## 安装要求
+
+- Python 3.8+
+- Chrome浏览器
+- 网络连接
+
+## 快速开始
+
+### 1. 克隆项目
 ```bash
-# Linux/Mac
-./run.sh
-
-# Windows
-run.bat
+git clone https://github.com/coyi1234567/91porn_spider.git
+cd 91porn_spider
 ```
 
-**方法二：手动安装**
-1. 安装Chrome浏览器
-2. 安装Python 3.8+
-3. 创建虚拟环境：
-   ```bash
-   python3 -m venv venv
-   source venv/bin/activate  # Linux/Mac
-   # 或 venv\Scripts\activate.bat  # Windows
-   ```
-4. 安装依赖：
-   ```bash
-   pip install -r requirements.txt
-   ```
+### 2. 安装依赖
+```bash
+# 创建虚拟环境
+python3 -m venv venv
+source venv/bin/activate  # Linux/Mac
+# 或 venv\Scripts\activate  # Windows
 
-
-#### 使用说明
-
-1. 参数说明  
-   -c 爬取页面  
-   -u 爬取的网页 可以是单个视频的页面也可以使是类似首页的多个视频的页面。  
-   -o 视频存储路径  
-   -p 代理地址  
-   -t 同时爬取的视频个数  
-   -now 爬取前X天的的视频
-   -n 与-now一起使用，表示存评分前X个视频
-
-2. 示例  
-   **单个视频爬取**  
-   ```bash
-   python3 spider91.py -c -u "http://91porn.com/view_video.php?viewkey=8cd0148b3fe08d4a4c2f" -p "http://127.0.0.1:10808"
-   ```
-   
-   **单页多个视频爬取**  
-   ```bash
-   python3 spider91.py -c -u "http://91porn.com/v.php?category=rf&viewtype=basic&page=2" -p "http://127.0.0.1:10808"
-   ```
-   
-   **爬取前3天评分前100的视频**  
-   ```bash
-   python3 spider91.py -now 3 -n 100
-   ```
-   
-   **定时任务模式（默认）**  
-   ```bash
-   python3 spider91.py
-   ```
-
-3. 新增docker版本  
-   https://hub.docker.com/repository/docker/templelv/spider91
-
-   ```
-   docker run --restart=always -it --name spider91 \
-   -v /dir_to_save/:/root/spider91/save \
-   templelv/spider91 sh -c 'service supervisor start && /bin/bash' 
-   ```
-   /dir_to_save为用户设置的视频保存路径  
-   docker attach spider91 命令可以进入容器终端  
-   容器终端中执行/root/spider91/update.sh   将更新代码为github上最新并编译重新执行。  
-   代理列表通过修改配置文件更新，配置文件路径/root/spider91/proxyConfig.yaml  
-   推荐使用passwall建立多个代理。
-
-#### Vercel部署
-
-本项目已配置支持Vercel部署（Python版本）：
-
-**为什么选择Python而不是Go？**
-- ✅ Vercel对Python支持更成熟稳定
-- ✅ 配置更简单，无需复杂的运行时版本
-- ✅ 依赖管理更灵活
-- ✅ 调试和错误处理更容易
-
-**部署步骤：**
-1. 将代码推送到GitHub仓库
-2. 在Vercel中导入GitHub仓库
-3. 自动部署完成
-
-**API端点：**
-- `/` - 返回API状态信息
-- `/api` - 返回API状态信息
-
-**API响应示例：**
-```json
-{
-  "message": "91porn_spider API is running successfully!",
-  "status": "success",
-  "framework": "Python"
-}
+# 安装依赖
+pip install -r requirements.txt
 ```
 
-注意：由于Vercel的无服务器环境限制，完整的爬虫功能需要在本地环境或支持Chrome的服务器环境中运行。  
+### 3. 启动Chrome远程调试
+```bash
+# 启动Chrome并开启远程调试端口
+google-chrome --remote-debugging-port=9222 --user-data-dir=/tmp/chrome_debug
+```
+
+### 4. 运行爬虫
+```bash
+# 日榜爬取（前10个视频）
+python3 spider91.py -d
+
+# 周榜爬取（前10个视频）
+python3 spider91.py -w
+
+# 月榜爬取（前10个视频）
+python3 spider91.py -m
+
+# 自定义页面爬取
+python3 spider91.py -c -u "https://91porn.com/index.php"
+```
+
+## 存储结构
+
+```
+videos_storage/
+├── daily/                    # 日榜视频
+│   └── 20250929/            # 按日期分文件夹
+│       ├── [DAILY_20250929]_RANK01_SCORE000_HEAT000005_FAV2000_视频标题_viewkey.mp4
+│       └── ...
+├── weekly/                   # 周榜视频
+│   └── 20240923/            # 周一日期
+├── monthly/                  # 月榜视频
+│   └── 202409/              # 按年月分文件夹
+├── custom/                   # 自定义爬取
+└── metadata/                 # 元数据
+    ├── videos.db            # SQLite数据库
+    └── daily_20250929.json  # 榜单元数据
+```
+
+## 文件命名规则
+
+格式: `[类型_日期]_RANK排名_SCORE分数_HEAT热度_FAV收藏_标题_viewkey.mp4`
+
+示例: `[DAILY_20250929]_RANK01_SCORE000_HEAT000005_FAV2000_酒吧带走的极品女神_7973c5611b4b35bd2726.mp4`
+
+## 配置说明
+
+### 代理配置 (proxyConfig.yaml)
+```yaml
+proxy_url: "http://proxy.example.com:8080"
+```
+
+### 关键词评分 (score/wordValue.txt)
+```
+关键词=分数
+爆乳=10
+3p=8
+少妇=5
+```
+
+### 作者评分 (score/ownValue.txt)
+```
+作者名=分数
+作者A=10
+作者B=8
+```
+
+## 命令行参数
+
+```bash
+python3 spider91.py [选项]
+
+选项:
+  -d, --daily      日榜爬取模式 (前10个)
+  -w, --weekly     周榜爬取模式 (前10个)
+  -m, --monthly    月榜爬取模式 (前10个)
+  -c, --crawl      爬取指定页面
+  -u, --url URL    要爬取的页面URL
+  -s, --save-path  视频保存路径 (默认: ./videos_storage)
+```
+
+## 功能详解
+
+### 1. 视频信息提取
+- 标题、作者、时长、观看次数
+- 热度、收藏数量、评论数量
+- 点赞数、踩数、评分
+
+### 2. 去重机制
+- **ViewKey去重**: 基于视频唯一标识
+- **文件Hash去重**: 基于MD5值避免重复下载
+- **数据库记录**: 完整的下载历史记录
+
+### 3. 评分系统
+- 关键词匹配评分
+- 作者权重评分
+- 观看次数加权
+- 综合排名计算
+
+### 4. 元数据管理
+- SQLite数据库存储
+- JSON格式导出
+- 完整的视频信息记录
+
+## 定时任务
+
+### Linux/Mac (crontab)
+```bash
+# 每日8点执行日榜爬取
+0 8 * * * cd /path/to/91porn_spider && source venv/bin/activate && python3 spider91.py -d
+
+# 每周六9点执行周榜爬取
+0 9 * * 6 cd /path/to/91porn_spider && source venv/bin/activate && python3 spider91.py -w
+
+# 每月1号10点执行月榜爬取
+0 10 1 * * cd /path/to/91porn_spider && source venv/bin/activate && python3 spider91.py -m
+```
+
+### Windows (任务计划程序)
+创建定时任务，执行以下命令：
+```cmd
+cd C:\path\to\91porn_spider
+venv\Scripts\activate
+python spider91.py -d
+```
+
+## 故障排除
+
+### 1. Chrome连接失败
+```bash
+# 确保Chrome已启动远程调试
+google-chrome --remote-debugging-port=9222 --user-data-dir=/tmp/chrome_debug
+```
+
+### 2. 网络连接问题
+- 检查网络连接
+- 配置代理设置
+- 检查防火墙设置
+
+### 3. 年龄验证页面
+- 确保Chrome已登录91porn账户
+- 手动处理年龄验证后运行爬虫
+
+### 4. 下载失败
+- 检查磁盘空间
+- 检查文件权限
+- 查看日志文件
+
+## 日志文件
+
+- `spider91.log`: 详细的运行日志
+- 包含错误信息、下载进度、解析结果
+
+## 注意事项
+
+1. **合法使用**: 请遵守相关法律法规，仅用于学习研究
+2. **网络礼仪**: 避免频繁请求，设置合理的延迟
+3. **存储管理**: 定期清理旧文件，注意磁盘空间
+4. **隐私保护**: 妥善保管下载的视频文件
+
+## 技术栈
+
+- **Python 3.8+**: 主要编程语言
+- **Selenium**: 网页自动化
+- **SQLite**: 数据存储
+- **Chrome**: 浏览器引擎
+- **curl**: 视频下载
+
+## 更新日志
+
+### v1.0.0 (2025-09-29)
+- ✅ 完整的Python重写
+- ✅ 日榜、周榜、月榜支持
+- ✅ 智能文件命名和存储
+- ✅ 去重机制和元数据管理
+- ✅ 热度和收藏数量提取
+- ✅ 完整的错误处理和日志
+
+## 许可证
+
+本项目基于原始Go项目重写，遵循相同的开源许可证。
+
+## 贡献
+
+欢迎提交Issue和Pull Request来改进项目。
+
+## 联系方式
+
+如有问题，请通过GitHub Issues联系。
