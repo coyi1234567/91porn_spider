@@ -1,6 +1,0 @@
-# 邮件配置
-smtp_server: "smtp.gmail.com"
-smtp_port: 587
-username: "your_email@gmail.com"
-password: "your_app_password"
-to_email: "recipient@gmail.com"

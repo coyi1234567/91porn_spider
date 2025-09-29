@@ -1,0 +1,157 @@
+# 91porn智能视频爬虫与推荐系统 - 主配置文件
+
+# 系统基础配置
+system:
+  name: "91porn智能视频爬虫与推荐系统"
+  version: "1.0.0"
+  debug: false
+  timezone: "Asia/Shanghai"
+  language: "zh-CN"
+
+# 爬虫配置
+crawler:
+  # 基础设置
+  base_url: "https://91porn.com"
+  user_agent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36"
+  
+  # 爬取设置
+  daily_limit: 10      # 日榜下载数量
+  weekly_limit: 10     # 周榜下载数量
+  monthly_limit: 10    # 月榜下载数量
+  
+  # 时间设置
+  crawl_interval: 3600  # 爬取间隔(秒)
+  retry_times: 3        # 重试次数
+  timeout: 30           # 超时时间(秒)
+  
+  # 代理设置
+  use_proxy: false
+  proxy_list: []
+  
+  # 浏览器设置
+  headless: true
+  window_size: "1920,1080"
+  user_data_dir: "./chrome_data"
+
+# 存储配置
+storage:
+  # 视频存储
+  video_path: "./storage/video_storage"
+  thumbnail_path: "./storage/thumbnails"
+  metadata_path: "./storage/metadata"
+  
+  # 存储策略
+  max_storage_gb: 100    # 最大存储空间(GB)
+  cleanup_days: 30       # 清理天数
+  compression: true      # 是否压缩
+  
+  # 去重设置
+  dedup_by_viewkey: true
+  dedup_by_title: true
+  dedup_by_md5: true
+  title_similarity_threshold: 0.8
+
+# 推荐系统配置
+recommendation:
+  # 向量模型
+  model_name: "BAAI/bge-small-zh-v1.5"
+  vector_dimension: 384
+  batch_size: 32
+  
+  # 召回设置
+  keyword_recall_count: 50
+  semantic_recall_count: 50
+  final_result_count: 20
+  
+  # 融合策略
+  keyword_weight: 0.6
+  semantic_weight: 0.4
+  popularity_weight: 0.2
+
+# 数据库配置
+database:
+  # PostgreSQL (MediaCMS主数据库)
+  postgres:
+    host: "localhost"
+    port: 5432
+    name: "mediacms"
+    user: "mediacms"
+    password: "mediacms"
+  
+  # Redis (缓存)
+  redis:
+    host: "localhost"
+    port: 6379
+    db: 0
+    password: ""
+  
+  # Chroma (向量数据库)
+  chroma:
+    host: "localhost"
+    port: 8000
+    collection_name: "video_embeddings"
+
+# 安全配置
+security:
+  # 年龄验证
+  age_verification: true
+  min_age: 18
+  
+  # 访问控制
+  require_login: false
+  allow_anonymous: true
+  
+  # 数据保护
+  encrypt_metadata: false
+  log_user_actions: true
+
+# 性能配置
+performance:
+  # 并发设置
+  max_concurrent_downloads: 3
+  max_concurrent_crawls: 2
+  
+  # 缓存设置
+  cache_ttl: 3600
+  enable_redis_cache: true
+  
+  # 资源限制
+  max_memory_usage: "4GB"
+  max_cpu_usage: 80
+
+# 通知配置
+notifications:
+  # 邮件通知
+  email:
+    enabled: false
+    smtp_host: ""
+    smtp_port: 587
+    username: ""
+    password: ""
+    from_email: ""
+    to_emails: []
+  
+  # 系统通知
+  system:
+    enabled: true
+    log_level: "INFO"
+    log_file: "./logs/system.log"
+
+# 备份配置
+backup:
+  enabled: true
+  schedule: "0 2 * * *"  # 每天凌晨2点
+  retention_days: 7
+  backup_path: "./backups"
+  include_videos: false  # 是否备份视频文件
+
+# 监控配置
+monitoring:
+  enabled: true
+  metrics_port: 9090
+  health_check_interval: 60
+  alert_thresholds:
+    cpu_usage: 80
+    memory_usage: 80
+    disk_usage: 90
+    error_rate: 5
