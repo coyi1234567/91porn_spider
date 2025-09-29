@@ -209,6 +209,24 @@ class Media(models.Model):
     allow_whisper_transcribe = models.BooleanField("Transcribe auto-detected language", default=False)
     allow_whisper_transcribe_and_translate = models.BooleanField("Transcribe auto-detected language and translate to English", default=False)
 
+    # 91porn specific fields
+    heat = models.DecimalField("热度", max_digits=10, decimal_places=2, default=0.0, help_text="视频热度值")
+    favorites = models.IntegerField("收藏数", default=0, help_text="视频收藏数量")
+    score = models.DecimalField("评分", max_digits=5, decimal_places=2, default=0.0, help_text="视频评分")
+    rank_type = models.CharField("排行榜类型", max_length=20, blank=True, choices=[
+        ('daily', '日榜'),
+        ('weekly', '周榜'),
+        ('monthly', '月榜'),
+    ], help_text="视频所属排行榜类型")
+    rank_date = models.DateField("排行榜日期", blank=True, null=True, help_text="视频上榜日期")
+    rank_position = models.IntegerField("排名位置", default=0, help_text="在排行榜中的位置")
+    viewkey = models.CharField("91porn唯一标识", max_length=100, blank=True, unique=True, help_text="91porn网站的唯一标识符")
+    author = models.CharField("作者", max_length=200, blank=True, help_text="视频作者")
+    publish_date = models.DateTimeField("发布日期", blank=True, null=True, help_text="视频原始发布日期")
+    collection_volume = models.IntegerField("收藏量", default=0, help_text="视频收藏量")
+    comments_count = models.IntegerField("评论数", default=0, help_text="视频评论数量")
+    md5_hash = models.CharField("视频MD5哈希", max_length=32, blank=True, help_text="视频文件MD5哈希值，用于去重")
+
     # keep track if media file has changed, on saves
     __original_media_file = None
     __original_thumbnail_time = None
@@ -219,7 +237,14 @@ class Media(models.Model):
         indexes = [
             # TODO: check with pgdash.io or other tool what index need be
             # removed
-            GinIndex(fields=["search"])
+            GinIndex(fields=["search"]),
+            # 91porn specific indexes
+            models.Index(fields=["rank_type", "rank_date"]),
+            models.Index(fields=["viewkey"]),
+            models.Index(fields=["heat"]),
+            models.Index(fields=["score"]),
+            models.Index(fields=["rank_position"]),
+            models.Index(fields=["author"]),
         ]
 
     def __str__(self):
